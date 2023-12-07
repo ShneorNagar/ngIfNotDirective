@@ -1,16 +1,17 @@
 import {
   Directive,
-  ElementRef,
   Input,
   ViewContainerRef,
   TemplateRef,
   OnInit,
+  OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 
 @Directive({
   selector: '[ngIfNot]',
 })
-export class NgIfNotDirective implements OnInit {
+export class NgIfNotDirective implements OnInit, OnChanges {
   @Input() ngIfNot: boolean;
 
   constructor(
@@ -18,9 +19,21 @@ export class NgIfNotDirective implements OnInit {
     private templateRef: TemplateRef<any>
   ) {}
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if ('ngIfNot' in changes) {
+      this.updateView();
+    }
+  }
+
   ngOnInit(): void {
+    this.updateView();
+  }
+
+  private updateView(): void {
     if (!this.ngIfNot) {
       this.viewContainerRef.createEmbeddedView(this.templateRef);
+    } else {
+      this.viewContainerRef.clear();
     }
   }
 }
