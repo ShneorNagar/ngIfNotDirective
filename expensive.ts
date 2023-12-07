@@ -3,26 +3,27 @@ function expensive(n) {
   return n + 4;
 }
 
-class OptimizeExpensiveWrapper {
+function createOptimizeExpensive(expensiveFunc: Function) {
   
-  private values = new Map<number, number>();
-
-  constructor(private expensiveFunc: Function){}
-
-  optimizeExpensive(n: number) {
-    if (this.values.has(n)) {
+  let values = new Map<number, number>();
+   
+  function optimizeExpensive(n: number) {
+    if (values.has(n)) {
       console.log('Getting from cache')
-      return this.values.get(n);
+      return values.get(n);
     } else {
-      let value = this.expensiveFunc(n);
-      this.values.set(n, value);
+      let value = expensiveFunc(n);
+      values.set(n, value);
       return value;
     }
   }
 
+  return {
+    optimizeExpensive
+  }
 }
 
-const optimizeCalc = new OptimizeExpensiveWrapper(expensive);
+const optimizeCalc = createOptimizeExpensive(expensive);
 optimizeCalc.optimizeExpensive(5);
 optimizeCalc.optimizeExpensive(4);
 optimizeCalc.optimizeExpensive(5);
